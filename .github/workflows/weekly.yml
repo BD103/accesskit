@@ -20,6 +20,10 @@ jobs:
       fail-fast: false
       matrix:
         windows-rs: [0.57.0, 0.56.0, 0.54.0]
+    defaults:
+      run:
+        # Use bash instead of cmd.
+        shell: bash
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
