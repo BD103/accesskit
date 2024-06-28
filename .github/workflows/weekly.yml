@@ -42,6 +42,17 @@ jobs:
             -e "s/$WINDOWS_REGEX/$WINDOWS_REPLACEMENT/" \
             platforms/windows/Cargo.toml
 
+      - name: Log windows-rs version
+        run: |
+          cargo update
+
+          VERSION=$(
+            cargo metadata --format-version 1 \
+              | jq --raw-output '.packages[] | select(.name == "windows") | .version'
+          )
+
+          echo windows-rs version is $VERSION.
+
       # TODO: Cache files using Swatinem/rust-cache@v2
 
       - name: Test accesskit_windows
