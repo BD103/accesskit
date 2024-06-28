@@ -41,10 +41,9 @@ jobs:
           WINDOWS_REPLACEMENT='[dependencies.windows]\nversion = "=${{ matrix.windows-rs }}"'
 
           # Use extended regex to edit Cargo.toml.
-          sed -E -i bak \
+          sed -E -i platforms/windows/Cargo.toml \
             -e "s/$WINDOWS_CORE_REGEX/$WINDOWS_CORE_REPLACEMENT/" \
             -e "s/$WINDOWS_REGEX/$WINDOWS_REPLACEMENT/" \
-            platforms/windows/Cargo.toml
 
       - name: Log windows-rs version
         run: |
