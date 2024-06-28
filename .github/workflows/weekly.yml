@@ -1,0 +1,48 @@
+name: Weekly
+
+on:
+  # Run every Sunday at midnight.
+  schedule:
+    - cron: 0 0 * * 0
+  # Allow running manually.
+  workflow_dispatch:
+
+env:
+  # Force colorful output, even though we're running in Github Actions.
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test-windows-rs-versions:
+    name: Test with windows-rs ${{ matrix.windows-rs }}
+    runs-on: windows-2019
+    strategy:
+      # One version failing should not cancel another.
+      fail-fast: false
+      matrix:
+        windows-rs: [0.57.0, 0.56.0, 0.54.0]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # TODO: Consider checking out MSRV
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Pin windows-rs version to ${{ matrix.windows-rs }}
+        run: |
+          WINDOWS_CORE_REGEX='^windows-core = ".+"$'
+          WINDOWS_CORE_REPLACEMENT='windows-core = "=${{ matrix.windows-rs }}"'
+
+          WINDOWS_REGEX='^\[dependencies\.windows\]\nversion = "(.+)"$'
+          WINDOWS_REPLACEMENT='[dependencies.windows]\nversion = "=${{ matrix.windows-rs }}"'
+
+          # Use extended regex to edit Cargo.toml.
+          sed -E -i bak \
+            -e "s/$WINDOWS_CORE_REGEX/$WINDOWS_CORE_REPLACEMENT/" \
+            -e "s/$WINDOWS_REGEX/$WINDOWS_REPLACEMENT/" \
+            platforms/windows/Cargo.toml
+
+      # TODO: Cache files using Swatinem/rust-cache@v2
+
+      - name: Test accesskit_windows
+        run: cargo test -p accesskit_windows
