@@ -19,7 +19,7 @@ static_assertions = "1.1.0"
 # Note: this explicit dependency is required because in `windows` 0.56
 # the `implement` macro changed to use the windows_core crate directly.
 # Keep this in sync with `windows` crate version range.
-windows-core = ">=0.54, <=0.57"
+# windows-core = ">=0.54, <=0.57"
 
 [dependencies.windows]
 version = ">=0.54, <=0.57"
