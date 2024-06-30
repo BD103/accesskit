@@ -29,9 +29,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Pin windows-rs version to ${{ matrix.windows-rs }}
-        run: |
-          cargo update windows --precise ${{ matrix.windows-rs }}
-          cargo update windows-core --precise ${{ matrix.windows-rs }}
+        run: cargo update windows windows-core --precise ${{ matrix.windows-rs }}
 
       # TODO: Cache files using Swatinem/rust-cache@v2
 
