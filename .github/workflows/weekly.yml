@@ -20,10 +20,6 @@ jobs:
       fail-fast: false
       matrix:
         windows-rs: [0.57.0, 0.56.0, 0.54.0]
-    defaults:
-      run:
-        # Use bash instead of cmd.
-        shell: bash
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -34,27 +30,8 @@ jobs:
 
       - name: Pin windows-rs version to ${{ matrix.windows-rs }}
         run: |
-          WINDOWS_CORE_REGEX='^windows-core = ".+"$'
-          WINDOWS_CORE_REPLACEMENT='windows-core = "=${{ matrix.windows-rs }}"'
-
-          WINDOWS_REGEX='^\[dependencies\.windows\]\nversion = "(.+)"$'
-          WINDOWS_REPLACEMENT='[dependencies.windows]\nversion = "=${{ matrix.windows-rs }}"'
-
-          # Use extended regex to edit Cargo.toml.
-          sed -E -i platforms/windows/Cargo.toml \
-            -e "s/$WINDOWS_CORE_REGEX/$WINDOWS_CORE_REPLACEMENT/" \
-            -e "s/$WINDOWS_REGEX/$WINDOWS_REPLACEMENT/" \
-
-      - name: Log windows-rs version
-        run: |
-          cargo update
-
-          VERSION=$(
-            cargo metadata --format-version 1 \
-              | jq --raw-output '.packages[] | select(.name == "windows") | .version'
-          )
-
-          echo windows-rs version is $VERSION.
+          cargo update windows --precise ${{ matrix.windows-rs }}
+          cargo update windows-core --precise ${{ matrix.windows-rs }}
 
       # TODO: Cache files using Swatinem/rust-cache@v2
 
