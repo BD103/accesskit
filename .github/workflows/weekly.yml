@@ -29,7 +29,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Pin windows-rs version to ${{ matrix.windows-rs }}
-        run: cargo update windows windows-core --precise ${{ matrix.windows-rs }}
+        run: git apply platforms/windows/${{ matrix.windows-rs }}.patch
 
       # TODO: Cache files using Swatinem/rust-cache@v2
 
